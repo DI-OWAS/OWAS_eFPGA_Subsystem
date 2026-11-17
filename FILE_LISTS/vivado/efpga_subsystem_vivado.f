@@ -1,6 +1,6 @@
 # Auto-generated flat file list
 # Source: FILE_LISTS/vivado/efpga_subsystem_vivado.f
-# Total files: 179
+# Total files: 175
 
 OWAS_Fabric/Fabric/models_pack.v
 OWAS_Fabric/Tile/FLUT51PSDM/common/FLUT51PSDM_architecture.v
@@ -125,12 +125,10 @@ OWAS_Fabric/Tile/NPU_SLICE/NPU_SLICE_ConfigMem.v
 OWAS_Fabric/Tile/NPU_SLICE/NPU_SLICE_switch_matrix.v
 OWAS_Fabric/Tile/N_term_IO_W/N_term_IO_W_switch_matrix.v
 OWAS_Fabric/Tile/N_term_NPU_SLICE/N_term_NPU_SLICE_switch_matrix.v
-OWAS_Fabric/Tile/N_term_RAM_IO/N_term_RAM_IO_switch_matrix.v
 OWAS_Fabric/Tile/SOC_DEBUG_IO/SOC_DEBUG_IO_ConfigMem.v
 OWAS_Fabric/Tile/SOC_DEBUG_IO/SOC_DEBUG_IO_switch_matrix.v
 OWAS_Fabric/Tile/S_term_IO_W/S_term_IO_W_switch_matrix.v
 OWAS_Fabric/Tile/S_term_NPU_SLICE/S_term_NPU_SLICE_switch_matrix.v
-OWAS_Fabric/Tile/S_term_RAM_IO/S_term_RAM_IO_switch_matrix.v
 OWAS_Fabric/Tile/AXIL_S_IO_W/AXIL_S_IO_W.v
 OWAS_Fabric/Tile/AXI_M_IO_W/AXI_M_IO_W.v
 OWAS_Fabric/Tile/EXT_PMOD/EXT_PMOD.v
@@ -141,11 +139,9 @@ OWAS_Fabric/Tile/NPU_CTRL_CFG/NPU_CTRL_CFG.v
 OWAS_Fabric/Tile/NPU_SLICE/NPU_SLICE.v
 OWAS_Fabric/Tile/N_term_IO_W/N_term_IO_W.v
 OWAS_Fabric/Tile/N_term_NPU_SLICE/N_term_NPU_SLICE.v
-OWAS_Fabric/Tile/N_term_RAM_IO/N_term_RAM_IO.v
 OWAS_Fabric/Tile/SOC_DEBUG_IO/SOC_DEBUG_IO.v
 OWAS_Fabric/Tile/S_term_IO_W/S_term_IO_W.v
 OWAS_Fabric/Tile/S_term_NPU_SLICE/S_term_NPU_SLICE.v
-OWAS_Fabric/Tile/S_term_RAM_IO/S_term_RAM_IO.v
 OWAS_Fabric/Fabric/ConfigFSM.v
 OWAS_Fabric/Fabric/config_UART.v
 OWAS_Fabric/Fabric/bitbang.v
