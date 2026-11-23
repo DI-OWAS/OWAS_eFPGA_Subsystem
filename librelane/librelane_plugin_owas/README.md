@@ -32,6 +32,7 @@ unset they behave as before.
 | `regions.py` | `Odb.AddPlacementRegions`, the `Regions.*` variants and their variables |
 | `macros.py` | `Odb.ConnectMacroRingStripes`, `Odb.RemoveMacroObstructions`, `Odb.RestoreMacroMasters`, `Odb.MacroClockPinFirst` |
 | `names.py` | `Odb.ShortenNames` |
+| `lib.py` | `Lib.CombinationalClockArcs` (edits the macro's own LIB views) |
 | `scripts/odbpy/` | scripts run by `openroad -python` (`lef_utils.py`: shared LEF/master helpers) |
 | `scripts/openroad/` | Tcl run or sourced by `openroad`; `regions_wrap.tcl` is the entry script of the `Regions.*` variants |
 
@@ -205,6 +206,18 @@ paths can stay unrepaired with a large margin.
 (its diode insertion), `Odb.DiodesOnPorts`, `OpenROAD.RepairDesignPostGRT`,
 `OpenROAD.ResizerTimingPostGRT` and their `Regions.*` variants. Both unset: the
 steps run as in LibreLane.
+
+## Combinational clock arcs in macro libs
+
+`Lib.CombinationalClockArcs` (`LIB_COMBINATIONAL_CLOCK_ARCS`: list of
+`<clock input>-><clock output>`) rewrites a macro's clock feed-through in its own
+LIB views as one combinational `positive_unate` arc: `cell_rise` /
+`rise_transition` from the `rising_edge` arc, `cell_fall` / `fall_transition`
+from the `falling_edge` arc. OpenSTA's `write_timing_model` models such an
+output as a register output, so in the parent design the clock stops at the
+macro unless a generated clock sits on the output pin. Fails unless every corner
+has exactly one `rising_edge` and one `falling_edge` arc for each entry. Insert it
+after STA: `"+OpenROAD.STAPostPNR": Lib.CombinationalClockArcs`.
 
 ## Clock pin first (CTS latency balancing)
 
