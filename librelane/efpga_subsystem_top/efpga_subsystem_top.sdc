@@ -34,6 +34,10 @@ foreach port [all_inputs] {
 }
 
 set_input_delay $input_delay_value -clock $clocks $sync_inputs
+# NPU reset: its flops sit behind the clk_i latency through the eFPGA and act bank 3
+# (4.6-7.6 ns). The earlier min arrival makes the flow pad the reset net for removal. What
+# remains is the hold value of this pin in the lib, which the driver has to meet
+set_input_delay -min 3.5 -clock $clocks [get_ports rst_efpga_npu_n_i]
 set_output_delay $output_delay_value -clock $clocks [all_outputs]
 
 set_false_path -from $async_inputs
