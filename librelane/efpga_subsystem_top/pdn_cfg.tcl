@@ -48,8 +48,6 @@ foreach vdd $::env(VDD_NETS) gnd $::env(GND_NETS) {
 set_voltage_domain -name CORE -power $::env(VDD_NET) -ground $::env(GND_NET) \
     -secondary_power $secondary
 
-
-
 if { $::env(PDN_MULTILAYER) == 1 } {
 
     set arg_list [list]
@@ -131,7 +129,6 @@ if { $::env(PDN_ENABLE_RAILS) == 1 } {
         -layers "$::env(PDN_RAIL_LAYER) $::env(PDN_VERTICAL_LAYER)"
 }
 
-
 # Adds the core ring if enabled.
 if { $::env(PDN_CORE_RING) == 1 } {
     if { $::env(PDN_MULTILAYER) == 1 } {
@@ -195,30 +192,6 @@ add_pdn_connect \
 
 # SRAM macros
 
-#define_pdn_grid \
-#    -macro \
-#    -instances "\
-#    i_chip_core.sram_0" \
-#    -name sram_NS \
-#    -starts_with POWER
-#
-#add_pdn_stripe \
-#    -grid sram_NS \
-#    -layer Metal5 \
-#    -width 2.81 \
-#    -pitch 11.24 \
-#    -offset 2.81 \
-#    -spacing 2.81 \
-#    -nets "VSS VDD" \
-#    -starts_with POWER
-#
-#add_pdn_connect \
-#    -grid sram_NS \
-#    -layers "Metal4 Metal5"
-#add_pdn_connect \
-#    -grid sram_NS \
-#    -layers "Metal5 TopMetal1"
-#
 define_pdn_grid \
     -macro \
     -cells act_bank_container \
@@ -228,6 +201,16 @@ define_pdn_grid \
 add_pdn_connect \
     -grid act_sram \
     -layers "Metal3 TopMetal1"
+
+# psum: no halo. pdngen cuts the TopMetal1 rows back by halo + spacing around a macro; with the
+# default halo they stop ~12 um short, with 0 they reach onto the psum ring bars
+define_pdn_grid \
+    -macro \
+    -cells psum_requant_container \
+    -name psum_sram \
+    -starts_with POWER \
+    -halo "0 0"
+
 add_pdn_connect \
-    -grid act_sram \
-    -layers "Metal2 Metal4"
+    -grid psum_sram \
+    -layers "Metal4 TopMetal1"

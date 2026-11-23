@@ -207,6 +207,23 @@ paths can stay unrepaired with a large margin.
 `OpenROAD.ResizerTimingPostGRT` and their `Regions.*` variants. Both unset: the
 steps run as in LibreLane.
 
+## Clock roots on macro outputs
+
+`CTS_CLOCK_ROOT_PINS` (list of `get_pins` patterns, default unset, declared on
+`Regions.CTS` only) gives the nets on those pins their own clock trees, for a
+clock that reaches flops only through a macro's combinational clock arc (e.g.
+an eFPGA user clock output, or a clock feed-through modelled with
+`Lib.CombinationalClockArcs`) when the SDC has no generated clock on the macro
+output. TritonCTS takes its roots from the SDC clocks' leaf pins and stops at
+block instances, so without it those flops get no tree.
+
+`cts_clock_roots.tcl` wraps `clock_tree_synthesis`: during the call each
+pattern gets a temporary clock `cts_root_<i>` (period of the first SDC clock) on
+its pins, deleted right after, so the rest of the step and the SDC it writes see
+the design's own clocks only. It does not use `-clk_nets`: with it TritonCTS
+skips `findClkNets()` and loses clock-gated sub-trees, and the LatencyBalancer
+only counts clock paths that start on the tree's root net.
+
 ## Combinational clock arcs in macro libs
 
 `Lib.CombinationalClockArcs` (`LIB_COMBINATIONAL_CLOCK_ARCS`: list of
@@ -224,8 +241,9 @@ after STA: `"+OpenROAD.STAPostPNR": Lib.CombinationalClockArcs`.
 `Odb.MacroClockPinFirst` (`MACRO_CLOCK_PIN_FIRST`: macro master -> output pin)
 makes that pin the master's first output pin. OpenROAD dcf3613's post-CTS
 LatencyBalancer starts a clock's tree at the root driver's first output pin
-(`dbInst::getFirstOutput`), not at the driving pin. A clock generated on a pin
-of a multi-output macro (macro LEF pins are often alphabetical) therefore gets
+(`dbInst::getFirstOutput`), not at the driving pin. A clock defined on a pin of
+a multi-output macro (generated, or a `CTS_CLOCK_ROOT_PINS` root; macro LEF pins
+are often alphabetical) therefore gets
 no delay buffers ("inserted 0 delay buffers"), and its sub-trees (register
 tree, clock-gated tree, macro sinks) stay unbalanced. The step copies the macro
 LEF from `MACROS` with that PIN block first (into the step dir), reads it into
@@ -281,7 +299,7 @@ GDS. Port nets are never renamed. Insert it before stream-out, e.g.
 ## Error codes
 
 The Tcl hooks report their own errors under OpenROAD's `ORD` tool ID, in the
-range 9300-9319:
+range 9300-9329:
 
 | Code | Meaning |
 |---|---|
@@ -290,6 +308,7 @@ range 9300-9319:
 | ORD-9303 | `improve_placement` workaround: proxy master not found after `read_lef` |
 | ORD-9304 | `improve_placement` workaround: macro pin not reconnected |
 | ORD-9310 | legalization moved cells too far on average (see Legalization guard) |
+| ORD-9320 | a `CTS_CLOCK_ROOT_PINS` pattern matches no pin |
 
 ## Limitations
 
