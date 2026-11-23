@@ -17,6 +17,7 @@ All build automation, code generation, formal verification, and bitstream compil
 | **Turn `.f` filelists into LibreLane `VERILOG_FILES`** *(called by the `librelane/` Makefiles)* | `python3 scripts/filelist_to_librelane.py FILE_LISTS/asic/act_bank_container_asic.f -o <out.json>` |
 | **Strip Windows CRLF line endings from all `.f` files** | `python3 scripts/clean_filelists_crlf.py` |
 | **Regenerate the eFPGA LEF with open TopMetal1 bands** *(in `make nix`)* | `make -C librelane/efpga_subsystem_top tm1-lef` |
+| **Generate a fabric netlist with a soft-logic design's bitstream hard-coded** *(Vivado, FPGA prototyping)* | `vivado -mode batch -nojournal -source scripts/hardcoded_fabric/generate_hardcoded_netlist.tcl -tclargs -vh SOFT_LOGIC/build/flex/flex.vh -o SOFT_LOGIC/build/flex/flex_hardcoded_fabric.v` |
 
 ---
 
@@ -115,3 +116,13 @@ python3 scripts/clean_filelists_crlf.py --help
 python3 scripts/clean_filelists_crlf.py
 ```
 
+---
+
+### 9. `hardcoded_fabric/generate_hardcoded_netlist.tcl` — Fabric Netlist with Hard-Coded Bitstream
+
+Synthesises the fabric with one design's bitstream hard-coded (FABulous `EMULATION` mode, `<design>.vh` from `generate_bitstream.py`) into a flat, loop-free gate-level `eFPGA_top` that replaces the `OWAS_Fabric/` sources in FPGA builds. Configuration logic and unused routing are optimised away, so the netlist implements only that design, not the reconfigurable fabric. Options, checks and the two-pass flow: [`hardcoded_fabric/README.md`](hardcoded_fabric/README.md).
+
+```bash
+vivado -mode batch -nojournal -source scripts/hardcoded_fabric/generate_hardcoded_netlist.tcl \
+  -tclargs -vh SOFT_LOGIC/build/flex/flex.vh -o SOFT_LOGIC/build/flex/flex_hardcoded_fabric.v
+```
