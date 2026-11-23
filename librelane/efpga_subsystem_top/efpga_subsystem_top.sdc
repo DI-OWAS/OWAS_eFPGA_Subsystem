@@ -3,19 +3,10 @@ set clock_port $::env(CLOCK_PORT)
 create_clock [get_ports $clock_port] -name $clock_port -period $::env(CLOCK_PERIOD)
 set clocks [get_clocks $clock_port]
 
-set fab_user_clk_pins [get_pins {fabric_inst.eFPGA_inst/Tile_X10Y*_FAB_USER_CLK}]
-create_generated_clock -name npu_act_clk \
-    -source [get_ports $clock_port] -master_clock $clock_port \
-    -divide_by 1 \
-    $fab_user_clk_pins
-
-set core_clk_bank "npu_inst.act_buffer_stage.gen_containers\[3\].container_inst"
-create_generated_clock -name npu_core_clk \
-    -source [get_pins $core_clk_bank/clk_i] -master_clock npu_act_clk \
-    -edges {1 2 3} \
-    [get_pins $core_clk_bank/clk_o]
-
-set all_clks [get_clocks {clk_i npu_act_clk npu_core_clk}]
+# Single clock: clk_i propagates through the eFPGA (UserCLK -> FAB_USER_CLK) and the
+# act bank 3 (clk_i -> clk_o) combinational clock arcs into the NPU. CTS roots on these
+# macro outputs come from CTS_CLOCK_ROOT_PINS (config.yaml).
+set all_clks [get_clocks $clock_port]
 
 set input_delay_value [expr $::env(CLOCK_PERIOD) * $::env(IO_DELAY_CONSTRAINT) / 100]
 set output_delay_value [expr $::env(CLOCK_PERIOD) * $::env(IO_DELAY_CONSTRAINT) / 100]

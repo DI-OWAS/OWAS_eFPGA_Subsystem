@@ -32,6 +32,11 @@ RUN_KLAYOUT_DRC: True
 CLOCK_PORT: clk_i
 CLOCK_NET: clk_i
 CLOCK_PERIOD: 20.0
+# clk_i reaches the NPU only through macro clock arcs (no generated clocks in the SDC):
+# trees on the eFPGA FAB_USER_CLK outputs and on act bank 3 clk_o (Regions.CTS)
+CTS_CLOCK_ROOT_PINS:
+  - 'fabric_inst.eFPGA_inst/Tile_X10Y*_FAB_USER_CLK'
+  - 'npu_inst.act_buffer_stage.gen_containers\[3\].container_inst/clk_o'
 PNR_SDC_FILE: dir::efpga_subsystem_top.sdc
 SIGNOFF_SDC_FILE: dir::efpga_subsystem_top.sdc
 
