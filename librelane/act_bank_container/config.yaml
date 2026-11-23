@@ -4,6 +4,7 @@ meta:
   substituting_steps:
     Magic.DRC: null
     OpenROAD.CTS: null
+    "+OpenROAD.STAPostPNR": Lib.CombinationalClockArcs
 
 DESIGN_NAME: act_bank_container
 
@@ -26,6 +27,9 @@ PDN_CFG: dir::pdn_cfg.tcl
 CLOCK_PORT: clk_i
 CLOCK_NET: clk_i
 CLOCK_PERIOD: 20.0
+# clk_o is clk_i buffered: model it as a combinational arc so the top's clk_i
+# propagates through it (no generated clock on clk_o in the top SDC)
+LIB_COMBINATIONAL_CLOCK_ARCS: ["clk_i->clk_o"]
 # NOTE: Use these if the setup timing is violated in the typical corner
 PL_RESIZER_SETUP_SLACK_MARGIN: 2.5
 PL_RESIZER_SETUP_MAX_BUFFER_PCT: 80
