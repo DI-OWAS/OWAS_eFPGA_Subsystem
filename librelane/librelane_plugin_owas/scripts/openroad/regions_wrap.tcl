@@ -18,6 +18,11 @@ if { [info exists ::env(_REGIONS_HOLD_REPEATS)] || [info exists ::env(_REGIONS_H
 if { [info exists ::env(_REGIONS_DPO_SEED)] } {
     source $::env(_REGIONS_DPO_TCL)
 }
+# Optional extra CTS roots on macro clock outputs (CTS_CLOCK_ROOT_PINS, only passed to
+# Regions.CTS), see cts_clock_roots.tcl.
+if { [info exists ::env(_CTS_CLOCK_ROOT_PINS)] } {
+    source $::env(_CTS_CLOCK_ROOT_TCL)
+}
 # Optional extra global_route options (GRT_RESISTANCE_AWARE / GRT_CRITICAL_NETS_PERCENTAGE).
 if { [info exists ::env(_GRT_EXTRA_TCL)] } {
     source $::env(_GRT_EXTRA_TCL)

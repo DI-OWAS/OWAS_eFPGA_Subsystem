@@ -152,6 +152,18 @@ dpo_seed_variable = Variable(
     default=None,
 )
 
+# Read by cts_clock_roots.tcl; only the Regions.CTS variant declares it.
+cts_root_pins_variable = Variable(
+    "CTS_CLOCK_ROOT_PINS",
+    Optional[List[str]],
+    "Instance pins (get_pins patterns, e.g. ``u_macro/CLK_OUT*``) whose nets get their "
+    "own clock tree in Regions.CTS, in addition to the SDC clock sources. For clocks that "
+    "reach flops only through a macro's combinational clock arc, without a generated clock "
+    "on the macro output: TritonCTS stops at block instances. Unset: CTS finds its roots "
+    "from the SDC, as in LibreLane.",
+    default=None,
+)
+
 
 class _WithRegions:
     """
@@ -180,6 +192,11 @@ class _WithRegions:
         if dpo_seed is not None and self.id == "Regions.DetailedPlacement":
             env["_REGIONS_DPO_SEED"] = str(dpo_seed)
             env["_REGIONS_DPO_TCL"] = openroad_script("improve_placement.tcl")
+        root_pins = self.config.get("CTS_CLOCK_ROOT_PINS")
+        if root_pins and self.id == "Regions.CTS":
+            # one pattern per line: Tcl list parsing would eat the \[ \] escapes
+            env["_CTS_CLOCK_ROOT_PINS"] = "\n".join(root_pins)
+            env["_CTS_CLOCK_ROOT_TCL"] = openroad_script("cts_clock_roots.tcl")
         return env
 
     def get_command(self) -> List[str]:
@@ -215,7 +232,8 @@ for _base_id in (
                 "config_vars": _Base.config_vars
                 + [regions_variable, hold_repeat_variable, max_displacement_variable]
                 + ([grt_hold_setup_variable] if _name == "ResizerTimingPostGRT" else [])
-                + ([dpo_seed_variable] if _name == "DetailedPlacement" else []),
+                + ([dpo_seed_variable] if _name == "DetailedPlacement" else [])
+                + ([cts_root_pins_variable] if _name == "CTS" else []),
                 "__module__": __name__,
             },
         )
