@@ -18,6 +18,7 @@ meta:
     "-Odb.AddPDNObstructions": Odb.RemoveMacroObstructions
     "+OpenROAD.GeneratePDN": Odb.ConnectMacroRingStripes
     "-Odb.RemovePDNObstructions": Odb.RestoreMacroMasters
+    "+OpenROAD.STAPostPNR": Lib.CornerLibraryNames
 
 DESIGN_NAME: efpga_subsystem_top
 

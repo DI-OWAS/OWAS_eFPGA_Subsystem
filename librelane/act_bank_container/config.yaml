@@ -5,6 +5,7 @@ meta:
     Magic.DRC: null
     OpenROAD.CTS: null
     "+OpenROAD.STAPostPNR": Lib.CombinationalClockArcs
+    "+Lib.CombinationalClockArcs": Lib.CornerLibraryNames
 
 DESIGN_NAME: act_bank_container
 
