@@ -1,4 +1,4 @@
-library (efpga_subsystem_top) {
+library (efpga_subsystem_top__nom_fast_1p32V_m40C) {
   comment                        : "";
   delay_model                    : table_lookup;
   simulation                     : false;

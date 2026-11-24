@@ -1,4 +1,4 @@
-library (efpga_subsystem_top) {
+library (efpga_subsystem_top__nom_slow_1p08V_125C) {
   comment                        : "";
   delay_model                    : table_lookup;
   simulation                     : false;
