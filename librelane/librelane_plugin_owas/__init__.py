@@ -10,7 +10,7 @@ resizing, CTS and antenna repair.
 
 Also: extra global_route options, repeated hold repair, an improve_placement
 seed, PDN stripe-to-macro-ring connections, macro LEF edits (obstructions, PG
-pins, pin order), name shortening and combinational clock arcs in macro libs. See README.md.
+pins, pin order), name shortening, combinational clock arcs and per-corner library names in macro libs. See README.md.
 
 Install: put the folder containing this package on PYTHONPATH (or pip install
 it). LibreLane auto-imports any module named ``librelane_plugin_*``.
