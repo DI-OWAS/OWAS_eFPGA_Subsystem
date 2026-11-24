@@ -1,7 +1,7 @@
 REPO_ROOT := $(abspath ..)
 NIX_DIR ?= $(REPO_ROOT)/OWAS_Fabric/FABulous
 
-.PHONY: all act_bank_container psum_requant_container efpga_subsystem_top zip unzip nix help
+.PHONY: all act_bank_container psum_requant_container efpga_subsystem_top gzip gunzip nix help
 
 all: act_bank_container psum_requant_container efpga_subsystem_top
 
@@ -11,8 +11,8 @@ help:
 	@echo "  act_bank_container      flow of one macro; make -C <macro> help lists its targets"
 	@echo "  psum_requant_container"
 	@echo "  efpga_subsystem_top"
-	@echo "  zip                     zip the large top views (needs zip)"
-	@echo "  unzip                   unpack every *.zip under MACROS/"
+	@echo "  gzip                    gzip the large top views"
+	@echo "  gunzip                  unpack every *.gz under MACROS/ (keeps the .gz)"
 	@echo "  nix                     shell in the FABulous nix env"
 
 act_bank_container:
@@ -24,15 +24,14 @@ psum_requant_container:
 efpga_subsystem_top:
 	$(MAKE) -C efpga_subsystem_top
 
-zip:
-	$(MAKE) -C efpga_subsystem_top zip
+gzip:
+	$(MAKE) -C efpga_subsystem_top gzip
 
-unzip:
-	find "$(REPO_ROOT)/MACROS" -name "*.zip" -exec sh -c '\
+gunzip:
+	find "$(REPO_ROOT)/MACROS" -name "*.gz" -exec sh -c '\
 		set -eu; \
 		for z do \
-			dir=$${z%/*}; \
-			(cd "$$dir" && unzip -oq "$${z##*/}"); \
+			gzip -dkf "$$z"; \
 			printf "Extracted %s\n" "$$z"; \
 		done' sh {} +
 

@@ -16,14 +16,15 @@ tm1-lef: $(TM1_LEF)
 
 help::
 	@echo "  tm1-lef               eFPGA LEF with open TopMetal1 bands"
-	@echo "  zip-final (zip)       zip the large views in MACROS/$(MACRO)/views (needs zip)"
+	@echo "  gzip-final (gzip)     gzip the large views in MACROS/$(MACRO)/views"
 
 librelane librelane-explore librelane-nodrc librelane-magicdrc librelane-klayoutdrc: $(TM1_LEF)
 
-.PHONY: zip zip-final
-zip: zip-final
+.PHONY: gzip gzip-final
+gzip: gzip-final
 
-zip-final:
+# gzip, not zip: KLayout, Magic and the OpenSTA SPEF reader read .gz directly
+gzip-final:
 	test -d "$(VIEWS_DIR)"
 	find "$(VIEWS_DIR)" -type f \( \
 		-name "*.gds" -o \
@@ -37,11 +38,11 @@ zip-final:
 		for file do \
 			dir=$${file%/*}; \
 			base=$${file##*/}; \
-			archive=$${base}.zip; \
+			archive=$${base}.gz; \
 			tmp=$${archive}.tmp; \
 			rm -f "$$dir/$$tmp"; \
-			(cd "$$dir" && zip -D -q "$$tmp" "$$base"); \
-			unzip -tq "$$dir/$$tmp"; \
+			gzip -n -9 -c "$$file" > "$$dir/$$tmp"; \
+			gzip -tq "$$dir/$$tmp"; \
 			mv -f "$$dir/$$tmp" "$$dir/$$archive"; \
 			rm -- "$$file"; \
 			printf "Archived and replaced %s with %s/%s\\n" "$$file" "$$dir" "$$archive"; \

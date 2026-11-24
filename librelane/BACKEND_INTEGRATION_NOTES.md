@@ -35,5 +35,5 @@ This document summarizes the unified backend architecture across `OWAS_Fabric` a
   - Notice that `MACROS/efpga_subsystem_top/views/` in `vendor/MLFPGA_engine` was generated against commit `5140025` of `OWAS_fabric` (prior to the Oct 30–31 `3340d7e` fabric PDN/corner-tile updates). To re-harden `efpga_subsystem_top` against the latest `OWAS_Fabric` (`2cef9b3`) macro views:
     ```bash
     make -C librelane efpga_subsystem_top
-    make -C librelane zip
+    make -C librelane gzip
     ```
