@@ -31,6 +31,8 @@ Transpiles SystemVerilog sources (`RTL/`, `MACROS/`, `VIVADO/`, `SOFT_LOGIC/`, `
 ./scripts/generate_verilog_mirror.sh --help
 ```
 
+Needs [sv2v](https://github.com/zachjs/sv2v). The script looks for it on `PATH`, in `~/.local/bin` and in `tools/bin/` (repo root, gitignored). If it finds none, it downloads the latest Linux release binary into `tools/bin/sv2v` (needs internet access and `python3`). Offline, put an sv2v binary in one of those places first, e.g. from the [releases page](https://github.com/zachjs/sv2v/releases) or with nix (`nix profile install nixpkgs#sv2v`). The modes other than `-e none` also need Yosys with the slang plugin and Icarus Verilog on `PATH`.
+
 | Flag | Description |
 | :--- | :--- |
 | `-e`, `--equiv <mode>` | `leaf` *(default)*: Yosys formal SAT proofs on leaf modules + structural audit fallback.<br>`none`: Fast transpilation only (skips formal verification and lints).<br>`full`: Full hierarchical formal equivalence checking. |
