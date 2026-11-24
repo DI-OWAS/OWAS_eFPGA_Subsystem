@@ -4,6 +4,7 @@ meta:
   flow: Classic
   substituting_steps:
     Magic.DRC: null
+    "+OpenROAD.STAPostPNR": Lib.CornerLibraryNames
 
 DESIGN_NAME: psum_requant_container
 

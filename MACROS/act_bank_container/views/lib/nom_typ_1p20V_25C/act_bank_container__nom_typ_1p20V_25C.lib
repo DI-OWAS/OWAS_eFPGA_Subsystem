@@ -1,4 +1,4 @@
-library (act_bank_container) {
+library (act_bank_container__nom_typ_1p20V_25C) {
   comment                        : "";
   delay_model                    : table_lookup;
   simulation                     : false;

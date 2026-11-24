@@ -32,7 +32,7 @@ unset they behave as before.
 | `regions.py` | `Odb.AddPlacementRegions`, the `Regions.*` variants and their variables |
 | `macros.py` | `Odb.ConnectMacroRingStripes`, `Odb.RemoveMacroObstructions`, `Odb.RestoreMacroMasters`, `Odb.MacroClockPinFirst` |
 | `names.py` | `Odb.ShortenNames` |
-| `lib.py` | `Lib.CombinationalClockArcs` (edits the macro's own LIB views) |
+| `lib.py` | `Lib.CombinationalClockArcs`, `Lib.CornerLibraryNames` (edit the macro's own LIB views) |
 | `scripts/odbpy/` | scripts run by `openroad -python` (`lef_utils.py`: shared LEF/master helpers) |
 | `scripts/openroad/` | Tcl run or sourced by `openroad`; `regions_wrap.tcl` is the entry script of the `Regions.*` variants |
 
@@ -235,6 +235,15 @@ output as a register output, so in the parent design the clock stops at the
 macro unless a generated clock sits on the output pin. Fails unless every corner
 has exactly one `rising_edge` and one `falling_edge` arc for each entry. Insert it
 after STA: `"+OpenROAD.STAPostPNR": Lib.CombinationalClockArcs`.
+
+## Library names per corner
+
+`Lib.CornerLibraryNames` names the library in each of the macro's LIB views
+after its file, `library (<DESIGN_NAME>__<corner>)`. `write_timing_model` names
+it after the design in every corner, and tools that load several corners side
+by side tell libraries apart by that name. Insert it after STA and after any
+other LIB edit: `"+OpenROAD.STAPostPNR": Lib.CornerLibraryNames`, or
+`"+Lib.CombinationalClockArcs": Lib.CornerLibraryNames`.
 
 ## Clock pin first (CTS latency balancing)
 

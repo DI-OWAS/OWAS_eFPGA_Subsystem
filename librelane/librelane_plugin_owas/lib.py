@@ -8,6 +8,10 @@ driving a clock output through buffers only) into one combinational
 register output (``rising_edge`` + ``falling_edge`` arcs from the clock input), so in
 the parent design the clock stops at the macro unless a generated clock sits on the
 output pin. With the combinational arc, the parent's clock propagates through it.
+
+``Lib.CornerLibraryNames`` gives each corner's library its own name.
+``write_timing_model`` names the library after the design in every corner, and
+tools that load several corners side by side tell libraries apart by that name.
 """
 import os
 import re
@@ -173,5 +177,46 @@ class CombinationalClockArcs(Step):
             os.makedirs(os.path.dirname(target), exist_ok=True)
             Path(target).write_text(text, encoding="utf8")
             # State views must be librelane.common.Path (a str subclass), not pathlib.Path
+            out[corner] = StatePath(target)
+        return {DesignFormat.LIB: out}, {}
+
+
+def set_library_name(lib: str, name: str) -> str:
+    """Sets the name of the ``library(...)`` group in lib."""
+    lib, count = re.subn(r"\blibrary\s*\([^)]*\)", f"library ({name})", lib, count=1)
+    if count == 0:
+        raise ValueError("no library group")
+    return lib
+
+
+@Step.factory.register()
+class CornerLibraryNames(Step):
+    """
+    Names the library in each of the macro's own timing models (the LIB views of the
+    state) after its file, ``<DESIGN_NAME>__<corner>``. Insert it after
+    ``OpenROAD.STAPostPNR`` and after any other step that edits the LIB views.
+    """
+
+    id = "Lib.CornerLibraryNames"
+    name = "Corner Library Names"
+
+    inputs = [DesignFormat.LIB]
+    outputs = [DesignFormat.LIB]
+
+    def run(self, state_in: State, **kwargs):
+        libs = state_in.get(DesignFormat.LIB)
+        if not isinstance(libs, dict) or not libs:
+            raise StepException("No LIB views in the input state (run after OpenROAD.STAPostPNR).")
+        out = {}
+        for corner, path in libs.items():
+            name = f"{self.config['DESIGN_NAME']}__{corner}"
+            try:
+                text = set_library_name(Path(path).read_text(encoding="utf8"), name)
+            except ValueError as e:
+                raise StepException(f"{corner}: {e} in {path}.") from e
+            verbose(f"{corner}: library {name}")
+            target = os.path.join(self.step_dir, corner, os.path.basename(str(path)))
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            Path(target).write_text(text, encoding="utf8")
             out[corner] = StatePath(target)
         return {DesignFormat.LIB: out}, {}

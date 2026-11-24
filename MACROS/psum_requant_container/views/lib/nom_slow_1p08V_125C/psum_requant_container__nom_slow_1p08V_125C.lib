@@ -1,4 +1,4 @@
-library (psum_requant_container) {
+library (psum_requant_container__nom_slow_1p08V_125C) {
   comment                        : "";
   delay_model                    : table_lookup;
   simulation                     : false;
